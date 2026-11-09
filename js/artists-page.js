@@ -7,6 +7,10 @@ async function fetchArtists() {
     });
 }
 
+function getArtistsByCategory(artists, category) {
+    return artists.filter(artist => artist.category === category);
+}
+
 async function loadArtists() {
     const loadingState = document.getElementById('loadingState');
     const errorState = document.getElementById('errorState');
@@ -17,7 +21,9 @@ async function loadArtists() {
     artistsGrid.style.display = 'none';
 
     try {
-        const artists = await fetchArtists();
+        const allArtists = await fetchArtists();
+        const category = document.body.dataset.artistCategory || 'international';
+        const artists = getArtistsByCategory(allArtists, category);
 
         loadingState.style.display = 'none';
         artistsGrid.style.display = 'grid';
@@ -36,7 +42,7 @@ function renderArtists(artists) {
     const artistsGrid = document.getElementById('artistsGrid');
 
     artistsGrid.innerHTML = artists.map(artist => `
-        <a href="#" class="artist-card" data-artist="${artist.name}">
+        <a href="game.html?artist=${encodeURIComponent(artist.id)}" class="artist-card">
             <div class="artist-image-container">
                 <img
                     src="${artist.image}"
@@ -54,10 +60,14 @@ function renderArtists(artists) {
     `).join('');
 
     artistsGrid.querySelectorAll('.artist-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.preventDefault();
-            const artistName = card.getAttribute('data-artist');
-            alert(`🎵 ${artistName}\n\nกำลังมาเร็วๆ นี้ (Coming Soon)`);
+        card.addEventListener('click', event => {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+            event.preventDefault();
+            document.body.classList.add('page-exit');
+            window.setTimeout(() => {
+                window.location.href = card.href;
+            }, 250);
         });
     });
 }

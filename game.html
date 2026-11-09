@@ -17,53 +17,6 @@
             transition: opacity 0.25s ease;
         }
 
-        /* อันนี้ โอเป็นคนทำเอง */
-
-        .game-container.artist-xxxtentacion {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/XXX_BG.jpg") center / cover fixed no-repeat;
-        }
-
-        body.game-container.artist-ed-sheeran {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/ed_shreen_bg.jpeg") center / cover fixed no-repeat;
-        }
-
-        body.game-container.artist-taylor-swift {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/Taylor-Swift_BG.jpg") center / cover fixed no-repeat;
-        }
-        
-        body.game-container.artist-bird-thongchai {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/Bird Thongchai_BG.jpg") center / cover fixed no-repeat;
-        }
-
-        body.game-container.artist-palmy {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/Palmy_BG.jpg") center / cover fixed no-repeat;
-        }
-        
-        body.game-container.artist-linkin-park {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/Linkin Park_BG.jpg") center / cover fixed no-repeat;
-        }
-
-        body.game-container.artist-bodyslam {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/Bodyslam_BG.jpg") center / cover fixed no-repeat;
-        }
-
-        body.game-container.artist-billie-eilish {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/Billie Eilish_BG.jpeg") center / cover fixed no-repeat;
-        }
-
-        body.game-container.artist-lisa {
-            background: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-                url("images/LISA_BG.jpg") center / cover fixed no-repeat;
-        }
-
         .game-container.page-enter {
             opacity: 1;
         }
@@ -219,6 +172,39 @@
 
         .answer-section {
             margin-bottom: 30px;
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            max-width: 640px;
+            margin: 0 auto 20px;
+        }
+
+        .choice-btn {
+            min-height: 64px;
+            padding: 12px 18px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            box-shadow: none;
+        }
+
+        .choice-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.22);
+            box-shadow: none;
+        }
+
+        .choice-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 520px) {
+            .choice-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .answer-input {
@@ -444,7 +430,7 @@
         <div class="container">
             <a id="back-to-menu" href="international.html" class="back-to-menu">← กลับสู่เมนูหลัก</a>
             <div class="artist-info">
-                <img id="header-artist-image" src="images/XXXTENTACION.jpg" alt="XXXTENTACION" class="artist-image" onerror="this.style.display='none';">
+                <img id="header-artist-image" alt="" class="artist-image" style="display: none;">
                 <h1 class="artist-name" id="header-artist-name">XXXTENTACION</h1>
             </div>
             <p class="game-subtitle" id="header-game-subtitle">ทายเพลงของ XXXTENTACION และทดสอบความรู้เพลงของคุณ!</p>
@@ -478,8 +464,12 @@
         <!-- Game Area -->
         <section id="game-area" class="game-area">
             <div id="start-prompt">
-                <p>กดเริ่มเกมเพื่อฟังเพลง</p>
-                <button id="start-btn" class="submit-btn">เริ่มเกม</button>
+                <p id="game-status" role="status" aria-live="polite">กำลังค้นหาเพลงจาก iTunes...</p>
+                <div id="api-error" class="feedback incorrect" style="display: none;" role="alert">
+                    <p id="api-error-message"></p>
+                    <button id="retry-api-btn" class="submit-btn" type="button">ลองโหลดอีกครั้ง</button>
+                </div>
+                <button id="start-btn" class="submit-btn" disabled>เริ่มเกม</button>
             </div>
 
             <!-- Timer -->
@@ -491,28 +481,21 @@
 
             <!-- Answer Section -->
             <div id="answer-section" class="answer-section" style="display: none;">
-                <input 
-                    type="text" 
-                    id="answer-input" 
-                    class="answer-input" 
-                    placeholder="พิมพ์ชื่อเพลงที่นี่..."
-                    autocomplete="off"
-                    disabled
-                >
-                <br>
+                <div id="choice-grid" class="choice-grid" role="group" aria-label="ตัวเลือกคำตอบ">
+                    <button class="submit-btn choice-btn" type="button" data-choice-index="0" disabled></button>
+                    <button class="submit-btn choice-btn" type="button" data-choice-index="1" disabled></button>
+                    <button class="submit-btn choice-btn" type="button" data-choice-index="2" disabled></button>
+                    <button class="submit-btn choice-btn" type="button" data-choice-index="3" disabled></button>
+                </div>
                 <button id="stop-audio-btn" class="submit-btn stop-audio-btn" type="button" disabled>
                     หยุดเพลง
-                </button>
-                <br>
-                <button id="submit-btn" class="submit-btn" disabled>
-                    ส่งคำตอบ
                 </button>
             </div>
 
             <!-- Feedback -->
             <div id="feedback" class="feedback"></div>
             <div id="playback-error" class="feedback incorrect" style="display: none;" role="alert">
-                เล่นเพลงไม่สำเร็จ ตรวจสอบไฟล์เสียงแล้วลองอีกครั้ง
+                เล่นตัวอย่างเพลงไม่สำเร็จ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
                 <button id="retry-audio-btn" class="submit-btn">ลองเล่นอีกครั้ง</button>
             </div>
         </section>
@@ -566,11 +549,6 @@
         const backToMenuHref = categoryPages[artistInfo && artistInfo.category] || 'international.html';
         document.getElementById('back-to-menu').href = backToMenuHref;
 
-        const songs = (artistSongs[artistId] || []).map(song => ({
-            ...song,
-            file: artistId === 'xxxtentacion' ? song.file.replace(/^audio\//, 'audio-X/') : song.file
-        }));
-
         if (!artistInfo) {
             // Unknown artist id
             document.body.innerHTML = `
@@ -585,38 +563,23 @@
                     </div>
                 </div>
             `;
-        } else if (songs.length === 0) {
-            // Artist exists but has no songs loaded yet
-            document.body.innerHTML = `
-                <div class="game-container">
-                    <div class="game-main">
-                        <a href="${backToMenuHref}" class="back-to-menu">← กลับสู่เมนูหลัก</a>
-                        <div class="game-area">
-                            <h2 style="color: #ff6b6b; margin-bottom: 20px;">🚧 Coming Soon</h2>
-                            <p style="color: white; margin-bottom: 30px;">Songs for ${artistInfo.name} aren't available yet.</p>
-                            <p style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">Please go back and pick another artist.</p>
-                            <button onclick="history.back()" class="submit-btn">Go Back</button>
-                        </div>
-                    </div>
-                </div>
-            `;
         } else {
             // Populate header with the selected artist's info
             document.title = `Guess The Song - ${artistInfo.name}`;
-            document.getElementById('header-artist-image').src = artistInfo.image;
             document.getElementById('header-artist-image').alt = artistInfo.name;
             document.getElementById('header-artist-name').textContent = artistInfo.name;
             document.getElementById('header-game-subtitle').textContent = `ทายเพลงของ ${artistInfo.name} และทดสอบความรู้เพลงของคุณ!`;
             document.getElementById('all-songs-played-artist').textContent = artistInfo.name;
 
-            // Generic game state, driven by the selected artist's songs
+            // Generic game state, driven by iTunes preview data.
             class Game {
-            constructor(songs) {
-                this.allSongs = songs;
+            constructor() {
+                this.allSongs = [];
 
                 // Game variables
-                this.availableSongs = [...this.allSongs];
+                this.availableSongs = [];
                 this.currentSong = null;
+                this.currentChoices = [];
                 this.score = 0;
                 this.level = 1;
                 this.currentRound = 1;
@@ -625,14 +588,6 @@
                 this.timer = null;
                 this.timeLeft = 15;
                 this.isPlaying = false;
-                
-                // Difficulty system
-                this.difficulty = 'medium';
-                this.difficultySettings = {
-                    easy: { maxDistance: 3, minSimilarity: 0.7 },
-                    medium: { maxDistance: 2, minSimilarity: 0.8 },
-                    hard: { maxDistance: 1, minSimilarity: 0.9 }
-                };
                 
                 // DOM elements
                 this.elements = {
@@ -645,12 +600,15 @@
                     startBtn: document.getElementById('start-btn'),
                     timerContainer: document.getElementById('timer-container'),
                     answerSection: document.getElementById('answer-section'),
+                    gameStatus: document.getElementById('game-status'),
+                    apiError: document.getElementById('api-error'),
+                    apiErrorMessage: document.getElementById('api-error-message'),
+                    retryApiBtn: document.getElementById('retry-api-btn'),
                     playbackError: document.getElementById('playback-error'),
                     retryAudioBtn: document.getElementById('retry-audio-btn'),
                     timerText: document.getElementById('timer-text'),
-                    answerInput: document.getElementById('answer-input'),
+                    choiceButtons: Array.from(document.querySelectorAll('.choice-btn')),
                     stopAudioBtn: document.getElementById('stop-audio-btn'),
-                    submitBtn: document.getElementById('submit-btn'),
                     feedback: document.getElementById('feedback'),
                     levelComplete: document.getElementById('level-complete'),
                     nextLevelDisplay: document.getElementById('next-level'),
@@ -667,45 +625,73 @@
                 this.artistId = artistId;
                 this.highScoreKey = `gts_highscore_${artistId}`;
                 this.highScore = 0;
+                this.isLoadingSongs = false;
+                this.artistImage = document.getElementById('header-artist-image');
 
                 this.songAudio = new Audio();
                 this.songAudio.addEventListener('error', () => {
-                    console.error(`Could not load audio file: ${this.currentSong && this.currentSong.file}`, this.songAudio.error);
+                    console.error(`Could not load iTunes preview: ${this.currentSong && this.currentSong.previewUrl}`, this.songAudio.error);
                 });
 
                 this.init();
+                this.loadSongs();
             }
             
             init() {
-                this.elements.submitBtn.addEventListener('click', () => this.checkAnswer());
                 this.elements.stopAudioBtn.addEventListener('click', () => this.toggleAudioPlayback());
+                this.elements.choiceButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        this.checkChoice(Number(button.dataset.choiceIndex));
+                    });
+                });
+                this.elements.retryApiBtn.addEventListener('click', () => this.loadSongs());
+                this.elements.retryAudioBtn.addEventListener('click', async () => {
+                    this.elements.playbackError.style.display = 'none';
+                    const started = await this.playCurrentSong();
+                    if (started) {
+                        this.isPlaying = true;
+                        this.setChoicesDisabled(false);
+                        this.startTimer();
+                    }
+                });
                 this.elements.startBtn.addEventListener('click', () => {
+                    if (!this.allSongs.length) return;
                     this.elements.startPrompt.style.display = 'none';
                     this.elements.timerContainer.style.display = 'flex';
                     this.elements.answerSection.style.display = 'block';
                     this.updateDisplay();
                     this.startRound();
                 });
-                this.elements.retryAudioBtn.addEventListener('click', async () => {
-                    this.elements.playbackError.style.display = 'none';
-                    const started = await this.playCurrentSong();
-                    if (started) {
-                        this.isPlaying = true;
-                        this.elements.stopAudioBtn.disabled = false;
-                        this.elements.answerInput.disabled = false;
-                        this.elements.submitBtn.disabled = false;
-                        this.startTimer();
-                        this.elements.answerInput.focus();
-                    }
-                });
-                this.elements.answerInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.checkAnswer();
-                });
                 this.elements.resetBtn.addEventListener('click', () => this.resetGame());
                 this.elements.resetBtn2.addEventListener('click', () => this.resetGame());
 
                 this.loadHighScore();
+            }
 
+            async loadSongs() {
+                if (this.isLoadingSongs) return;
+                this.isLoadingSongs = true;
+                this.elements.startBtn.disabled = true;
+                this.elements.retryApiBtn.disabled = true;
+                this.elements.gameStatus.textContent = `กำลังค้นหาเพลงของ ${artistInfo.name} จาก iTunes...`;
+                this.elements.apiError.style.display = 'none';
+
+                try {
+                    this.allSongs = await fetchArtistSongs(artistInfo.name);
+                    this.availableSongs = [...this.allSongs];
+
+                    this.elements.gameStatus.textContent = `พบเพลงตัวอย่าง ${this.allSongs.length} เพลง พร้อมเล่น`;
+                    this.elements.startBtn.disabled = false;
+                } catch (error) {
+                    console.error(`Unable to load iTunes songs for ${artistInfo.name}:`, error);
+                    this.elements.gameStatus.textContent = 'โหลดเพลงจาก iTunes ไม่สำเร็จ';
+                    this.elements.apiErrorMessage.textContent =
+                        `ตรวจสอบอินเทอร์เน็ต หรือเปิดเว็บผ่าน Live Server/HTTP แทนการเปิดไฟล์โดยตรง แล้วลองอีกครั้ง (${error.message})`;
+                    this.elements.apiError.style.display = 'block';
+                } finally {
+                    this.isLoadingSongs = false;
+                    this.elements.retryApiBtn.disabled = false;
+                }
             }
 
             // High score / leaderboard (localStorage)
@@ -774,46 +760,92 @@
                 const randomIndex = Math.floor(Math.random() * this.availableSongs.length);
                 this.currentSong = this.availableSongs[randomIndex];
                 this.availableSongs.splice(randomIndex, 1);
+                this.updateCurrentArtwork();
+                this.renderChoices();
 
                 // Reset timer
                 this.timeLeft = 15;
                 this.updateTimerDisplay();
 
-                // Enable input
-                this.elements.answerInput.disabled = false;
-                this.elements.submitBtn.disabled = false;
-                this.elements.answerInput.value = '';
-                this.elements.answerInput.focus();
+                this.setChoicesDisabled(true);
                 this.elements.playbackError.style.display = 'none';
 
                 const started = await this.playCurrentSong();
                 if (!started) {
-                    this.elements.answerInput.disabled = true;
-                    this.elements.submitBtn.disabled = true;
                     return;
                 }
 
                 this.isPlaying = true;
+                this.setChoicesDisabled(false);
                 this.startTimer();
+            }
+
+            updateCurrentArtwork() {
+                const artworkUrl = this.currentSong.artworkUrl;
+                if (!artworkUrl) {
+                    document.body.style.removeProperty('--game-background-image');
+                    this.artistImage.style.display = 'none';
+                    return;
+                }
+
+                try {
+                    const imageUrl = new URL(artworkUrl);
+                    if (imageUrl.protocol !== 'https:') {
+                        throw new Error('Artwork URL must use HTTPS');
+                    }
+
+                    document.body.style.setProperty(
+                        '--game-background-image',
+                        `url("${imageUrl.href}")`
+                    );
+                    this.artistImage.src = imageUrl.href;
+                    this.artistImage.style.display = 'block';
+                } catch (error) {
+                    console.error(`Invalid artwork URL for "${this.currentSong.name}":`, error);
+                    document.body.style.removeProperty('--game-background-image');
+                    this.artistImage.style.display = 'none';
+                }
+            }
+
+            renderChoices() {
+                const distractors = this.shuffleSongs(
+                    this.allSongs.filter(song => song !== this.currentSong)
+                ).slice(0, 3);
+                this.currentChoices = this.shuffleSongs([this.currentSong, ...distractors]);
+
+                this.elements.choiceButtons.forEach((button, index) => {
+                    button.textContent = this.currentChoices[index].name;
+                });
+            }
+
+            shuffleSongs(songs) {
+                for (let index = songs.length - 1; index > 0; index--) {
+                    const randomIndex = Math.floor(Math.random() * (index + 1));
+                    [songs[index], songs[randomIndex]] = [songs[randomIndex], songs[index]];
+                }
+                return songs;
+            }
+
+            setChoicesDisabled(disabled) {
+                this.elements.choiceButtons.forEach(button => {
+                    button.disabled = disabled;
+                });
             }
 
             // Play the current round's song clip
             async playCurrentSong() {
                 this.songAudio.pause();
                 this.songAudio.currentTime = 0;
-                this.songAudio.src = this.currentSong.file
-                    .split('/')
-                    .map(segment => encodeURIComponent(segment))
-                    .join('/');
+                this.songAudio.src = this.currentSong.previewUrl;
 
                 try {
                     await this.songAudio.play();
                     this.elements.stopAudioBtn.textContent = 'หยุดเพลง';
                     this.elements.stopAudioBtn.disabled = false;
-                    console.log(`Playing: ${this.currentSong.file}`);
+                    console.log(`Playing iTunes preview: ${this.currentSong.previewUrl}`);
                     return true;
                 } catch (err) {
-                    console.error(`Playback failed for "${this.currentSong.file}":`, err);
+                    console.error(`Playback failed for "${this.currentSong.previewUrl}":`, err);
                     this.elements.playbackError.style.display = 'block';
                     return false;
                 }
@@ -836,7 +868,7 @@
                         this.elements.stopAudioBtn.textContent = 'หยุดเพลง';
                         this.startTimer();
                     } catch (err) {
-                        console.error(`Playback resume failed for "${this.currentSong.file}":`, err);
+                        console.error(`Playback resume failed for "${this.currentSong.previewUrl}":`, err);
                         this.elements.playbackError.style.display = 'block';
                     }
                     return;
@@ -896,6 +928,7 @@
                 this.stopTimer();
                 this.stopCurrentSong();
                 this.isPlaying = false;
+                this.setChoicesDisabled(true);
 
                 this.updateScore(-2);
                 this.showFeedback(false, `Time's up! The answer was: ${this.currentSong.name}`);
@@ -906,122 +939,29 @@
                 }, 3000);
             }
 
-            // Levenshtein distance algorithm
-            calculateLevenshteinDistance(str1, str2) {
-                const matrix = [];
-                
-                for (let i = 0; i <= str2.length; i++) {
-                    matrix[i] = [i];
-                }
-                
-                for (let j = 0; j <= str1.length; j++) {
-                    matrix[0][j] = j;
-                }
-                
-                for (let i = 1; i <= str2.length; i++) {
-                    for (let j = 1; j <= str1.length; j++) {
-                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-                            matrix[i][j] = matrix[i - 1][j - 1];
-                        } else {
-                            matrix[i][j] = Math.min(
-                                matrix[i - 1][j - 1] + 1,
-                                matrix[i][j - 1] + 1,
-                                matrix[i - 1][j] + 1
-                            );
-                        }
-                    }
-                }
-                
-                return matrix[str2.length][str1.length];
-            }
-            
-            // Normalize text for better matching
-            normalizeText(text) {
-                return text
-                    .toLowerCase()
-                    .trim()
-                    .replace(/[!?.,;:'"\-\_\(\)\[\]]/g, '')
-                    .replace(/\s+/g, ' ')
-                    .replace(/\b(the|a|an)\b/g, '')
-                    .trim();
-            }
-            
-            // Calculate similarity percentage
-            calculateSimilarity(userAnswer, correctAnswer) {
-                const normalizedUser = this.normalizeText(userAnswer);
-                const normalizedCorrect = this.normalizeText(correctAnswer);
-                
-                if (normalizedUser === normalizedCorrect) {
-                    return 1.0;
-                }
-                
-                const distance = this.calculateLevenshteinDistance(normalizedUser, normalizedCorrect);
-                const maxLength = Math.max(normalizedUser.length, normalizedCorrect.length);
-                
-                if (maxLength === 0) return 0;
-                
-                const similarity = 1 - (distance / maxLength);
-                return Math.max(0, similarity);
-            }
-            
-            // Check answer
-            checkAnswerIntelligently(userAnswer) {
-                const settings = this.difficultySettings[this.difficulty];
-                const similarity = this.calculateSimilarity(userAnswer, this.currentSong.name);
-                const distance = this.calculateLevenshteinDistance(
-                    this.normalizeText(userAnswer), 
-                    this.normalizeText(this.currentSong.name)
-                );
-                
-                if (similarity >= 0.95) {
-                    return { correct: true, score: 5, message: "Perfect! 🎉" };
-                } else if (similarity >= settings.minSimilarity && distance <= settings.maxDistance) {
-                    const score = similarity >= 0.9 ? 5 : similarity >= 0.8 ? 3 : 1;
-                    return { 
-                        correct: true, 
-                        score: score, 
-                        message: score === 5 ? "Excellent! 🎉" : score === 3 ? "Good! 👍" : "Close enough! 😊" 
-                    };
-                } else if (similarity >= 0.5) {
-                    return { 
-                        correct: false, 
-                        score: -1, 
-                        message: `Almost! The answer was: ${this.currentSong.name}` 
-                    };
-                } else {
-                    return { 
-                        correct: false, 
-                        score: -2, 
-                        message: `Wrong! The answer was: ${this.currentSong.name}` 
-                    };
-                }
-            }
-            
-            // Check answer
-            checkAnswer() {
-                if (!this.isPlaying || this.elements.submitBtn.disabled) return;
-
-                const userAnswer = this.elements.answerInput.value.trim();
-                if (!userAnswer) return;
+            checkChoice(choiceIndex) {
+                const choiceButton = this.elements.choiceButtons[choiceIndex];
+                if (!this.isPlaying || !choiceButton || choiceButton.disabled) return;
+                const selectedSong = this.currentChoices[choiceIndex];
+                if (!selectedSong) return;
 
                 this.stopTimer();
                 this.stopCurrentSong();
                 this.isPlaying = false;
+                this.setChoicesDisabled(true);
 
-                this.elements.answerInput.disabled = true;
-                this.elements.submitBtn.disabled = true;
+                const correct = selectedSong === this.currentSong;
+                this.updateScore(correct ? 5 : -2);
+                this.showFeedback(
+                    correct,
+                    correct ? 'ถูกต้อง! 🎉' : `ไม่ถูกต้อง! คำตอบคือ: ${this.currentSong.name}`
+                );
 
-                const result = this.checkAnswerIntelligently(userAnswer);
-                this.updateScore(result.score);
-                this.showFeedback(result.correct, result.message);
-
-                const delay = result.correct ? 1500 : 3000;
+                const delay = correct ? 1500 : 3000;
                 setTimeout(() => {
                     this.currentRound++;
                     this.startNewRound();
                 }, delay);
-
-                this.elements.answerInput.value = "";
             }
             
             updateScore(points) {
@@ -1048,12 +988,6 @@
                 this.elements.feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
                 this.elements.feedback.style.display = 'block';
 
-                this.elements.answerInput.classList.remove('shake', 'correct-glow');
-                this.elements.answerInput.classList.add(isCorrect ? 'correct-glow' : 'shake');
-                setTimeout(() => {
-                    this.elements.answerInput.classList.remove('shake', 'correct-glow');
-                }, 500);
-
                 setTimeout(() => {
                     this.elements.feedback.style.display = 'none';
                 }, 2500);
@@ -1074,7 +1008,10 @@
                     this.elements.levelComplete.style.display = 'none';
                     this.level++;
                     this.currentRound = 1;
-                    this.totalRounds = this.songsPerLevel[this.level];
+                    this.totalRounds = Math.min(
+                        this.songsPerLevel[this.level],
+                        this.availableSongs.length
+                    );
                     this.startNewRound();
                 }, 3000);
             }
@@ -1119,9 +1056,8 @@
                 this.elements.newHighScoreBadge.style.display = 'none';
                 this.elements.newHighScoreBadge2.style.display = 'none';
                 
-                this.elements.answerInput.value = '';
-                this.elements.answerInput.disabled = true;
-                this.elements.submitBtn.disabled = true;
+                this.currentChoices = [];
+                this.setChoicesDisabled(true);
                 
                 setTimeout(() => {
                     this.startNewRound();
@@ -1131,9 +1067,10 @@
 
         // Initialize game when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new Game(songs);
+            new Game();
         });
         } // Close the else block for artist validation
     </script>
 </body>
 </html>
+ห

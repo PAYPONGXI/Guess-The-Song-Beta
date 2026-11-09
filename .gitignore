@@ -1,4 +1,7 @@
 GTS
-.claude
-.vscode
+audio/
+audio-X/
+.claude/
+.cursor/
+.vscode/
 CLAUDE.md

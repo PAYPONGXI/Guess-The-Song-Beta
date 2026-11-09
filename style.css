@@ -12,6 +12,28 @@ body {
     line-height: 1.6;
 }
 
+body.game-container {
+    position: relative;
+    isolation: isolate;
+    overflow-x: hidden;
+}
+
+body.game-container::before {
+    content: "";
+    position: fixed;
+    inset: -14px;
+    z-index: -1;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.68)),
+        var(--game-background-image, none);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(12px);
+    transform: scale(1.04);
+    pointer-events: none;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
